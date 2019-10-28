@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"sms/common/message"
+	"time"
 )
 
 // 登陆校验
@@ -44,6 +45,14 @@ func login(userID int, userPwd string) (err error) {
 		fmt.Println("conn.Write err=", err)
 		return
 	}
-	fmt.Printf("发送长度为%d", len(data))
+
+	_, err = conn.Write(data)
+	if err != nil {
+		fmt.Println("conn.Write(data) err=", err)
+		return
+	}
+	time.Sleep(10 * time.Second)
+	fmt.Println("休眠了10秒")
+	// TODO 处理返回的数据
 	return
 }
