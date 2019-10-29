@@ -1,22 +1,33 @@
 package message
 
 const (
-	LoginMesType    = "LoginMes"
+	// LoginMesType 登陆消息Type字符串
+	LoginMesType = "LoginMes"
+	// LoginResMesType 登陆结果消息Type字符串
 	LoginResMesType = "LoginResMes"
+	// LoginResMesCodeOk 登陆成功消息码
+	LoginResMesCodeOk = 200
+	// LoginResMesCodeBadReq 请求错误消息码
+	LoginResMesCodeBadReq = 400
+	// LoginResMesCodeServerError 服务器错误消息码
+	LoginResMesCodeServerError = 500
 )
 
+// Message 消息体
 type Message struct {
 	Type string `json:"type"`
 	Data string `json:"data"`
 }
 
+// LoginMes 登陆消息
 type LoginMes struct {
 	UserID   int    `json:"userid"`
 	UserPwd  string `json:"userpwd"`
 	UserName string `json:"username"`
 }
 
+// LoginResMes 登陆结果消息
 type LoginResMes struct {
-	Code  int    `json:"code"` //400 未注册 200 成功
+	Code  int    `json:"code"`
 	Error string `json:"error"`
 }

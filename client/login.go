@@ -1,23 +1,16 @@
 package main
 
 import (
-	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"net"
 	"sms/common/message"
-	"time"
+	"sms/common/utils"
 )
 
 // 登陆校验
 func login(userID int, userPwd string) (err error) {
-	conn, err := net.Dial("tcp", "localhost:9999")
-	if err != nil {
-		fmt.Println("net.Dial err=", err)
-		return
-	}
-	defer conn.Close()
-
+	// 生成消息
 	var mes message.Message
 	mes.Type = message.LoginMesType
 	var loginMes message.LoginMes
@@ -26,33 +19,39 @@ func login(userID int, userPwd string) (err error) {
 
 	data, err := json.Marshal(loginMes)
 	if err != nil {
-		fmt.Println("json.marshal err=", err)
+		fmt.Println("marshal err", err)
 		return
 	}
 	mes.Data = string(data)
 
 	data, err = json.Marshal(mes)
 	if err != nil {
-		fmt.Println("json.Marshal err=", err)
+		fmt.Println("marshal err", err)
 		return
 	}
-	var pkgLen uint32
-	pkgLen = uint32(len(data))
-	var buf [4]byte
-	binary.BigEndian.PutUint32(buf[0:4], pkgLen)
-	n, err := conn.Write(buf[:4])
-	if n != 4 || err != nil {
-		fmt.Println("conn.Write err=", err)
-		return
-	}
-
-	_, err = conn.Write(data)
+	// 发送消息
+	err = utils.WritePkg(conn, data)
 	if err != nil {
-		fmt.Println("conn.Write(data) err=", err)
+		fmt.Println("writepkg fail", err)
 		return
 	}
-	time.Sleep(10 * time.Second)
-	fmt.Println("休眠了10秒")
-	// TODO 处理返回的数据
-	return
+	// 接收消息
+	mes, err = utils.ReadPkg(conn)
+	if err != nil {
+		fmt.Println("readpkg fail", err)
+		return
+	}
+	// 处理返回的数据
+	var logResMes message.LoginResMes
+	err = json.Unmarshal([]byte(mes.Data), &logResMes)
+	if err != nil {
+		fmt.Println("unmarshal fail", err)
+		return
+	}
+	// 返回状态码
+	if logResMes.Code != message.LoginResMesCodeOk {
+		return errors.New(logResMes.Error)
+	}
+	return nil
+
 }

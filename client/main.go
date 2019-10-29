@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"os"
 )
 
@@ -9,7 +10,19 @@ import (
 var userID int
 var userPwd string
 
+var conn net.Conn
+
+func init() {
+	var err error
+	conn, err = net.Dial("tcp", "localhost:9999")
+	if err != nil {
+		fmt.Println("net.Dial err=", err)
+		return
+	}
+}
+
 func main() {
+	defer conn.Close()
 	// 接受选项，判断是否继续显示菜单
 	var key int
 	var loop = true
