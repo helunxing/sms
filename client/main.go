@@ -6,10 +6,6 @@ import (
 	"os"
 )
 
-// 用户id，和用户密码
-var userID int
-var userPwd string
-
 var conn net.Conn
 
 func init() {
@@ -50,15 +46,29 @@ func main() {
 	}
 	// 根据用户的输入，显示新的提示信息
 	if key == 1 {
-		fmt.Println("请输入用户id：")
-		fmt.Scanf("%d\n", &userID)
-		fmt.Println("请输入密码：")
-		fmt.Scanf("%s\n", &userPwd)
-		err := login(userID, userPwd)
-		if err != nil {
-			fmt.Println("登陆失败")
-		} else {
-			fmt.Println("登陆成功")
+		for {
+			var userID int
+			var userPwd string
+			fmt.Println("请输入用户id：")
+			fmt.Scanf("%d\n", &userID)
+			fmt.Println("请输入密码：")
+			fmt.Scanf("%s\n", &userPwd)
+			err := login(userID, userPwd)
+			if err != nil {
+				fmt.Printf("登陆失败，原因：%s\n", err.Error())
+				fmt.Println("继续？y或Y继续，2注册，其他则退出：")
+				var chr string
+				fmt.Scanf("%d\n", &chr)
+				if !(chr == "y" || chr == "Y") {
+					break
+				}
+				if chr == "2" {
+					fmt.Println("注册逻辑")
+				}
+			} else {
+				fmt.Println("登陆成功")
+				break
+			}
 		}
 	} else if key == 2 {
 		fmt.Println("注册逻辑")

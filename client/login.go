@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"sms/common/message"
 	"sms/common/utils"
 )
@@ -19,34 +18,33 @@ func login(userID int, userPwd string) (err error) {
 
 	data, err := json.Marshal(loginMes)
 	if err != nil {
-		fmt.Println("marshal err", err)
-		return
+		return errors.New("marshal err " + err.Error())
 	}
 	mes.Data = string(data)
 
 	data, err = json.Marshal(mes)
 	if err != nil {
-		fmt.Println("marshal err", err)
-		return
+		return errors.New("marshal err " + err.Error())
+	}
+	// 生成传输结构体
+	tf := utils.Transfer{
+		Conn: conn,
 	}
 	// 发送消息
-	err = utils.WritePkg(conn, data)
+	err = tf.WritePkg(data)
 	if err != nil {
-		fmt.Println("writepkg fail", err)
-		return
+		return errors.New("writepkg fail " + err.Error())
 	}
 	// 接收消息
-	mes, err = utils.ReadPkg(conn)
+	mes, err = tf.ReadPkg()
 	if err != nil {
-		fmt.Println("readpkg fail", err)
-		return
+		return errors.New("readpkg fail " + err.Error())
 	}
 	// 处理返回的数据
 	var logResMes message.LoginResMes
 	err = json.Unmarshal([]byte(mes.Data), &logResMes)
 	if err != nil {
-		fmt.Println("unmarshal fail", err)
-		return
+		return errors.New("unmarshal fail " + err.Error())
 	}
 	// 返回状态码
 	if logResMes.Code != message.LoginResMesCodeOk {
