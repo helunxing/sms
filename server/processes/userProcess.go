@@ -6,6 +6,7 @@ import (
 	"net"
 	"sms/common/message"
 	"sms/common/utils"
+	"sms/server/model"
 )
 
 // UserProcess 用户
@@ -30,11 +31,22 @@ func (up *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 	var loginResMes message.LoginResMes
 
 	// 判断用户合法性
-	if loginMes.UserID == 100 && loginMes.UserPwd == "123" {
-		loginResMes.Code = 200
+
+	user, err := model.MyUserDao.Login(loginMes.UserID, loginMes.UserPwd)
+	if err != nil {
+		if err == model.ErrorUserNotExists {
+			loginResMes.Code = 400
+			loginResMes.Error = err.Error()
+		} else if err == model.ErrorUserPwd {
+			loginResMes.Code = 401
+			loginResMes.Error = err.Error()
+		} else {
+			loginResMes.Code = 505
+			loginResMes.Error = "未知内部错误"
+		}
 	} else {
-		loginResMes.Code = 400
-		loginResMes.Error = "400:用户名或密码错误"
+		loginResMes.Code = 200
+		fmt.Println(user, "登陆成功")
 	}
 
 	// 将loginResMes序列化

@@ -51,6 +51,7 @@ func (tf *Transfer) ReadPkg() (mes message.Message, err error) {
 func (tf *Transfer) WritePkg(data []byte) (err error) {
 	// 先发送长度给对方
 	fmt.Printf("给%s发送数据\n", tf.Conn.RemoteAddr().String())
+	fmt.Printf("内容为%s", string(data))
 	var pkgLen uint32
 	pkgLen = uint32(len(data))
 	binary.BigEndian.PutUint32(tf.Buf[0:4], pkgLen)

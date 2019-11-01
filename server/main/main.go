@@ -3,9 +3,14 @@ package main
 import (
 	"fmt"
 	"net"
+	"sms/server/model"
+	"time"
 )
 
 func main() {
+	// 两个初始化有顺序
+	initPool("localhost:6379", 16, 0, 300*time.Second)
+	initUserDao()
 	fmt.Println("服务器监听9999端口")
 	listen, err := net.Listen("tcp", "0.0.0.0:9999")
 	if err != nil {
@@ -36,4 +41,9 @@ func handle(conn net.Conn) {
 		fmt.Printf("处理与%s连接的协程正常退出\n", conn.RemoteAddr())
 	}
 	return
+}
+
+func initUserDao() {
+	model.MyUserDao = model.NewUserDao(pool)
+
 }
