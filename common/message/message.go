@@ -5,6 +5,10 @@ const (
 	LoginMesType = "LoginMes"
 	// LoginResMesType 登陆结果消息Type字符串
 	LoginResMesType = "LoginResMes"
+	// RegisterMesType 注册消息Type字符串
+	RegisterMesType = "RegisterMes"
+	// RegisterResMesType 注册结果消息Type字符串
+	RegisterResMesType = "RegisterMesRes"
 	// LoginResMesCodeOk 登陆成功消息码
 	LoginResMesCodeOk = 200
 	// LoginResMesCodeBadReq 请求错误消息码
@@ -28,6 +32,17 @@ type LoginMes struct {
 
 // LoginResMes 登陆结果消息
 type LoginResMes struct {
+	Code  int    `json:"code"`
+	Error string `json:"error"`
+}
+
+// RegisterMes 注册消息
+type RegisterMes struct {
+	User User `json:"user"`
+}
+
+// RegisterResMes 注册响应
+type RegisterResMes struct {
 	Code  int    `json:"code"`
 	Error string `json:"error"`
 }

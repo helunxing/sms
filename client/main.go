@@ -7,6 +7,11 @@ import (
 )
 
 func main() {
+
+	var userID int
+	var userPwd string
+	var userName string
+
 	// 接收选项，判断是否继续显示菜单
 	var key int
 	for true {
@@ -20,16 +25,22 @@ func main() {
 		switch key {
 		case 1:
 			fmt.Println("登陆聊天室")
-			var userID int
-			var userPwd string
-			fmt.Println("请输入用户id：")
+			fmt.Printf("请输入用户id：")
 			fmt.Scanf("%d\n", &userID)
-			fmt.Println("请输入密码：")
+			fmt.Printf("请输入密码：")
 			fmt.Scanf("%s\n", &userPwd)
 			up := process.UesrProcess{}
 			up.Login(userID, userPwd)
 		case 2:
 			fmt.Println("注册用户")
+			fmt.Printf("请输入用户id：")
+			fmt.Scanf("%d\n", &userID)
+			fmt.Printf("请输入密码：")
+			fmt.Scanf("%s\n", &userPwd)
+			fmt.Printf("请输入昵称：")
+			fmt.Scanf("%s\n", &userName)
+			up := process.UesrProcess{}
+			up.Register(userID, userPwd, userName)
 		case 3:
 			fmt.Println("退出系统")
 			os.Exit(0)

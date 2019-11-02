@@ -47,6 +47,11 @@ func (p *Processor) serverProcessMes(mes *message.Message) (err error) {
 			Conn: p.Conn,
 		}
 		err = up.ServerProcessLogin(mes)
+	case message.RegisterMesType:
+		up := processes.UserProcess{
+			Conn: p.Conn,
+		}
+		err = up.ServerProcessRegister(mes)
 	default:
 		err = errors.New("消息类型不存在，无法处理")
 	}
