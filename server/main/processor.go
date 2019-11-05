@@ -34,13 +34,11 @@ func (p *Processor) process() (err error) {
 			return
 		}
 		err = p.serverProcessMes(&mes)
-		return
 	}
 }
 
 // serverProcessMes 根据客户端发送的消息种类不同，决定调用哪个函数处理
 func (p *Processor) serverProcessMes(mes *message.Message) (err error) {
-
 	switch mes.Type {
 	case message.LoginMesType:
 		up := processes.UserProcess{

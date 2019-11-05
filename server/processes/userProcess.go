@@ -11,7 +11,51 @@ import (
 
 // UserProcess 用户
 type UserProcess struct {
-	Conn net.Conn
+	Conn   net.Conn
+	UserID int
+}
+
+// NotifyOthersOnlineUser 通知其他在线用户
+func (up *UserProcess) NotifyOthersOnlineUser(userID int) {
+	// 遍历 onlineUsers，逐个发送
+	for id, onlineup := range userMgr.onlineUsers {
+		if id == userID {
+			continue
+		}
+		onlineup.NotifyMeOnline(userID)
+	}
+}
+
+// NotifyMeOnline 通知其某用户已上线
+func (up *UserProcess) NotifyMeOnline(userID int) {
+	var mes message.Message
+	mes.Type = message.NotifUserStatusMesType
+
+	var notifUserStatusMes message.NotifUserStatusMes
+	notifUserStatusMes.UserID = userID
+	notifUserStatusMes.Status = message.UserOnline
+
+	data, err := json.Marshal(notifUserStatusMes)
+	if err != nil {
+		fmt.Println("序列化失败", err)
+		return
+	}
+	mes.Data = string(data)
+	data, err = json.Marshal(mes)
+	if err != nil {
+		fmt.Println("序列化失败", err)
+		return
+	}
+
+	tf := &utils.Transfer{
+		Conn: up.Conn,
+	}
+
+	err = tf.WritePkg(data)
+	if err != nil {
+		fmt.Println("发送失败", err)
+		return
+	}
 }
 
 // ServerProcessRegister 处理注册请求
@@ -102,6 +146,12 @@ func (up *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 		}
 	} else {
 		loginResMes.Code = 200
+		up.UserID = loginMes.UserID
+		userMgr.AddOnLineUser(up)
+		up.NotifyOthersOnlineUser(loginMes.UserID)
+		for id := range userMgr.onlineUsers {
+			loginResMes.UsersID = append(loginResMes.UsersID, id)
+		}
 		fmt.Println(user, "登陆成功")
 	}
 

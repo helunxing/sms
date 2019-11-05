@@ -15,6 +15,14 @@ const (
 	LoginResMesCodeBadReq = 400
 	// LoginResMesCodeServerError 服务器错误消息码
 	LoginResMesCodeServerError = 500
+	// NotifUserStatusMesType 用户状态变化推送
+	NotifUserStatusMesType = "NotifUserStatusMes"
+)
+
+const (
+	UserOnline = iota
+	UserOffline
+	userBusy
 )
 
 // Message 消息体
@@ -32,8 +40,9 @@ type LoginMes struct {
 
 // LoginResMes 登陆结果消息
 type LoginResMes struct {
-	Code  int    `json:"code"`
-	Error string `json:"error"`
+	Code    int    `json:"code"`
+	UsersID []int  `json:"usersid"`
+	Error   string `json:"error"`
 }
 
 // RegisterMes 注册消息
@@ -45,4 +54,10 @@ type RegisterMes struct {
 type RegisterResMes struct {
 	Code  int    `json:"code"`
 	Error string `json:"error"`
+}
+
+// NotifUserStatusMes 用户状态变化推送
+type NotifUserStatusMes struct {
+	UserID int `json:"userid"`
+	Status int `json:"status"`
 }

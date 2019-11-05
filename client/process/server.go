@@ -1,9 +1,11 @@
 package process
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
+	"sms/common/message"
 	"sms/common/utils"
 )
 
@@ -20,6 +22,7 @@ func ShowMenu() {
 	switch key {
 	case 1:
 		fmt.Println("在线用户")
+		outputOnlineUser()
 	case 2:
 		fmt.Println("发送消息")
 	case 3:
@@ -44,7 +47,15 @@ func serverProcessMes(conn net.Conn) {
 			fmt.Println("tf.ReadPkg err=", err)
 			return
 		}
-		fmt.Printf("mes=%s\n", mes)
+		switch mes.Type {
+		case message.NotifUserStatusMesType:
+			// TODO 完成发送用户状态提醒
+			var notifyUserStatusMes message.NotifUserStatusMes
+			json.Unmarshal([]byte(mes.Data), &notifyUserStatusMes)
+			// json.Unmarshal()
+			updateUserStatus(&notifyUserStatusMes)
+		default:
+			fmt.Printf("mes类型未知，内容为 %s\n", mes)
+		}
 	}
-
 }
