@@ -17,6 +17,8 @@ const (
 	LoginResMesCodeServerError = 500
 	// NotifUserStatusMesType 用户状态变化推送
 	NotifUserStatusMesType = "NotifUserStatusMes"
+	// SmsMesType 消息内容类型
+	SmsMesType = "SmsMes"
 )
 
 const (
@@ -60,4 +62,10 @@ type RegisterResMes struct {
 type NotifUserStatusMes struct {
 	UserID int `json:"userid"`
 	Status int `json:"status"`
+}
+
+// SmsMes 消息内容类型
+type SmsMes struct {
+	Content string `json:"content"`
+	User
 }

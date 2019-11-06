@@ -74,6 +74,9 @@ func (up *UesrProcess) Login(userID int, userPwd string) (err error) {
 		// }
 	} else {
 		fmt.Println("登陆成功")
+		curUser.Conn = conn
+		curUser.UserID = userID
+		curUser.UserStatus = message.UserOnline
 		fmt.Println("当前在线用户列表如下：")
 		for _, v := range logResMes.UsersID {
 			if v == userID {

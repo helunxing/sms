@@ -2,10 +2,12 @@ package process
 
 import (
 	"fmt"
+	"sms/client/model"
 	"sms/common/message"
 )
 
 var onlineUsers = make(map[int]*message.User, 10)
+var curUser model.CurUser
 
 // outputOnlineUser 显示当前用户列表
 func outputOnlineUser() {
